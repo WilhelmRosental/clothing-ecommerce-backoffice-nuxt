@@ -1,0 +1,26 @@
+{
+  "name": "from-airtable-to-supabase",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "update-customers": "node src/updateCustomers.js",
+    "update-newsletters": "node src/updateNewsletters.js",
+    "update-products": "node src/updateProducts.js",
+    "generate-types": "node src/generateAllDataTypes.js",
+    "get-subscriptions": "node src/testGetAllSubscriptions.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.25.0",
+    "airtable": "^0.12.1",
+    "axios": "^1.4.0",
+    "base64-arraybuffer": "^1.0.2",
+    "dotenv": "^16.3.1",
+    "sharp": "^0.32.1",
+    "uuid": "^9.0.0"
+  }
+}
