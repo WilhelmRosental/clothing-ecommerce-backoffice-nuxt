@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const supabaseUrl = process.env.SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_PUBLIC_KEY
@@ -7,89 +9,89 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 try {
   const { data, error } = await supabase.query(`
-    CREATE TABLE IF NOT EXISTS products (
-      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-      created_at TIMESTAMP DEFAULT NOW(),
-      old_id TEXT,
-      title TEXT,
-      description TEXT,
-      images TEXT[],
-      condition TEXT,
-      brand TEXT,
-      category TEXT,
-      type TEXT,
-      provider TEXT,
-      colors TEXT[],
-      materials TEXT[],
-      details TEXT[],
-      shoe_size TEXT,
-      size TEXT,
-      custom_fields JSONB,
-      instructions TEXT,
-      stock NUMERIC,
-      price NUMERIC,
-      final_price NUMERIC,
-      published BOOLEAN
-    );
-    
-    CREATE TABLE IF NOT EXISTS looks (
-      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-      created_at TIMESTAMP,
-      title TEXT,
-      thumbnail BOOLEAN,
-      designer TEXT,
-      univers TEXT,
-      left_top UUID,
-      left_bottom UUID,
-      right_top UUID,
-      right_middle UUID,
-      right_bottom UUID,
-      is_public BOOLEAN,
-      published BOOLEAN,
-      FOREIGN KEY (left_top) REFERENCES products(id),
-      FOREIGN KEY (left_bottom) REFERENCES products(id),
-      FOREIGN KEY (right_top) REFERENCES products(id),
-      FOREIGN KEY (right_middle) REFERENCES products(id),
-      FOREIGN KEY (right_bottom) REFERENCES products(id)
-    );
-    
-    CREATE TABLE IF NOT EXISTS profiles (
-      email TEXT PRIMARY KEY,
-      last_update timestamp,
-      firstname TEXT,
-      lastname TEXT,
-      silhouette TEXT,
-      age TEXT,
-      looking_for TEXT[],
-      occasion TEXT,
-      height TEXT,
-      color TEXT,
-      top_budget TEXT,
-      coat_budget TEXT,
-      bottom_budget TEXT,
-      shoes_budget TEXT,
-      bag_budget TEXT,
-      complete_budget TEXT,
-      prefered_brands TEXT[],
-      season TEXT,
-      styles TEXT[],
-      not_colors TEXT[],
-      not_materials TEXT[],
-      not_details TEXT[],
-      not_imprimes TEXT[],
-      top_size TEXT,
-      bottom_size TEXT,
-      shoe_size TEXT,
-      heel_height TEXT[],
-      finished BOOLEAN
-    );
-    
-    CREATE TABLE IF NOT EXISTS looks_profiles (
-      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-      created_at timestamp DEFAULT NOW(),
-      customer_email TEXT REFERENCES profiles(email),
-      look_id UUID REFERENCES looks(id)
-    );
+  CREATE TABLE IF NOT EXISTS products (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT NOW(),
+    old_id TEXT,
+    title TEXT,
+    description TEXT,
+    images JSON,
+    condition TEXT,
+    brand TEXT,
+    category TEXT,
+    type TEXT,
+    provider TEXT,
+    colors TEXT[],
+    materials TEXT[],
+    details TEXT[],
+    shoe_size TEXT,
+    size TEXT,
+    custom_fields JSONB,
+    instructions TEXT,
+    stock SMALLINT NOT NULL,
+    price REAL,
+    final_price REAL,
+    published BOOLEAN
+  );
+  
+  CREATE TABLE IF NOT EXISTS looks (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMP,
+    title TEXT,
+    thumbnail BOOLEAN,
+    designer TEXT,
+    univers TEXT,
+    left_top UUID REFERENCES products(id),
+    left_bottom UUID REFERENCES products(id),
+    right_top UUID REFERENCES products(id),
+    right_middle UUID REFERENCES products(id),
+    right_bottom UUID REFERENCES products(id),
+    is_public BOOLEAN,
+    published BOOLEAN NOT NULL DEFAULT FALSE
+  );
+  
+  CREATE TABLE IF NOT EXISTS profiles (
+    email TEXT NOT NULL PRIMARY KEY,
+    last_update TIMESTAMP DEFAULT NOW(),
+    firstname TEXT,
+    lastname TEXT,
+    silhouette TEXT,
+    age TEXT,
+    looking_for TEXT[],
+    occasion TEXT,
+    height TEXT,
+    color TEXT,
+    top_budget SMALLINT,
+    coat_budget SMALLINT,
+    bottom_budget SMALLINT,
+    shoes_budget SMALLINT,
+    bag_budget SMALLINT,
+    complete_budget INTEGER,
+    prefered_brands TEXT[],
+    season TEXT,
+    styles TEXT[],
+    not_colors TEXT[],
+    not_materials TEXT[],
+    not_details TEXT[],
+    not_imprimes TEXT[],
+    top_size SMALLINT,
+    bottom_size SMALLINT,
+    shoe_size SMALLINT,
+    heel_height TEXT[],
+    phone TEXT,
+    finished BOOLEAN
+  );
+  
+  CREATE TABLE IF NOT EXISTS looks_profiles (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT NOW(),
+    customer_email TEXT REFERENCES profiles(email),
+    look_id UUID REFERENCES looks(id)
+  );
+  
+  CREATE TABLE IF NOT EXISTS newsletters (
+    email TEXT NOT NULL PRIMARY KEY REFERENCES profiles(email)
+  ); 
     
     CREATE OR REPLACE VIEW brands AS
     SELECT DISTINCT brand
